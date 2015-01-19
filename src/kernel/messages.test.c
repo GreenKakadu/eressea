@@ -4,7 +4,18 @@
 #include <CuTest.h>
 #include <tests.h>
 
-void test_missing_message(CuTest *tc) {
+static void test_create_message(CuTest *tc) {
+    message *msg;
+    object *obj;
+    msg = msg_create_args("custom", "unit number", arg_unit(NULL), arg_int(42));
+    CuAssertPtrNotNull(tc, msg);
+    CuAssertPtrNotNull(tc, (obj = msg_get_arg(msg, "unit")));
+    CuAssertPtrEquals(tc, NULL, obj->data.v);
+    CuAssertPtrNotNull(tc, (obj = msg_get_arg(msg, "number")));
+    CuAssertIntEquals(tc, 42, obj->data.i);
+}
+
+static void test_missing_message(CuTest *tc) {
     message *msg;
     msg = msg_message("unknown", "unit", NULL);
     CuAssertPtrNotNull(tc, msg);
@@ -13,7 +24,7 @@ void test_missing_message(CuTest *tc) {
     msg_release(msg);
 }
 
-void test_message(CuTest *tc) {
+static void test_message(CuTest *tc) {
     message *msg;
 //    const char * args[] = { }
     message_type *mtype = mt_new("custom", NULL);
@@ -25,7 +36,6 @@ void test_message(CuTest *tc) {
     msg = msg_message("custom", "");
     CuAssertPtrNotNull(tc, msg);
     CuAssertIntEquals(tc, 1, msg->refcount);
-    CuAssertPtrEquals(tc, NULL, msg->parameters);
     CuAssertPtrEquals(tc, mtype, (void *)msg->type);
 
     CuAssertPtrEquals(tc, msg, msg_addref(msg));
@@ -38,6 +48,7 @@ void test_message(CuTest *tc) {
 
 CuSuite *get_messages_suite(void) {
     CuSuite *suite = CuSuiteNew();
+    SUITE_ADD_TEST(suite, test_create_message);
     SUITE_ADD_TEST(suite, test_missing_message);
     SUITE_ADD_TEST(suite, test_message);
     return suite;

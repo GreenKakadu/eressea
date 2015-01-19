@@ -9,6 +9,7 @@ bsdstring.test.c
 functions.test.c
 umlaut.test.c
 unicode.test.c
+object.test.c
 )
 
 SET(_FILES
@@ -26,6 +27,7 @@ lists.c
 log.c
 message.c
 nrmessage.c
+object.c
 parser.c
 rand.c
 resolve.c

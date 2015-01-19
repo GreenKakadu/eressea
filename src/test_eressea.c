@@ -44,6 +44,7 @@ int RunAllTests(void)
   RUN_TESTS(suite, order);
   RUN_TESTS(suite, race);
   /* util */
+  RUN_TESTS(suite, object);
   RUN_TESTS(suite, config);
   RUN_TESTS(suite, attrib);
   RUN_TESTS(suite, base36);
