@@ -1,6 +1,8 @@
 #include <platform.h>
 #include "messages.h"
 
+#include <util/object.h>
+
 #include <CuTest.h>
 #include <tests.h>
 
