@@ -1,3 +1,24 @@
+local function get_direction(locale, token)
+    local dir = eressea.locale.direction(locale, token)
+    if dir and dir>=0 then
+        return dir
+    end
+    return nil
+end
+
+function use_snowglobe(u, amount, token)
+    local direction = get_direction(u.faction.locale, token)
+    if direction then
+        local r = u.region:next(direction)
+        if r and r.terrain=="ocean" then
+            r.terrain = "glacier"
+        end
+    else
+        return -4
+    end
+    return 1
+end
+
 function use_snowman(u, amount)
     if amount>0 and u.region.terrain == "glacier" then
         local man = unit.create(u.faction, u.region)

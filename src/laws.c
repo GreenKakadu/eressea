@@ -3434,10 +3434,13 @@ void update_long_order(unit * u)
 static int use_item(unit * u, const item_type * itype, int amount, struct order *ord)
 {
     int i;
-    int target = read_unitid(u->faction, u->region);
+    int target = -1;
+
+    if (itype->useonother) {
+        target = read_unitid(u->faction, u->region);
+    }
 
     i = get_pooled(u, itype->rtype, GET_DEFAULT, amount);
-
     if (amount > i) {
         /* TODO: message? eg. "not enough %, using only %" */
         amount = i;
@@ -3446,21 +3449,17 @@ static int use_item(unit * u, const item_type * itype, int amount, struct order 
         return ENOITEM;
     }
 
-    if (target == -1) {
-        int result;
-        if (itype->use == NULL) {
-            return EUNUSABLE;
+    if (target<=0) {
+        if (itype->use) {
+            int result = itype->use(u, itype, amount, ord);
+            if (result > 0) {
+                use_pooled(u, itype->rtype, GET_DEFAULT, result);
+            }
+            return result;
         }
-        result = itype->use ? itype->use(u, itype, amount, ord) : EUNUSABLE;
-        if (result > 0) {
-            use_pooled(u, itype->rtype, GET_DEFAULT, result);
-        }
-        return result;
+        return EUNUSABLE;
     }
     else {
-        if (itype->useonother == NULL) {
-            return EUNUSABLE;
-        }
         return itype->useonother(u, target, itype, amount, ord);
     }
 }
